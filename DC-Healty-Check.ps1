@@ -1,20 +1,67 @@
-# Sukhija Vikas - Microsoft MVP
-# DC healty Check Tool
-#############################################################################
+<#PSScriptInfo
+
+.VERSION 1.0
+
+.GUID 30c7c087-1268-4d21-8bf7-ee25c37459b0
+
+.AUTHOR Vikas Sukhija
+
+.COMPANYNAME TechWizard.cloud
+
+.COPYRIGHT
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI https://techwizard.cloud/2021/05/04/active-directory-health-check-v2/
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES https://techwizard.cloud/2021/05/04/active-directory-health-check-v2/
+
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+    Date: 12/25/2014
+    AD Health Status
+    Satus: Ping,Netlogon,NTDS,DNS,DCdiag Test(Replication,sysvol,Services)
+    Update: Added Advertising
+    Update: 5/3/2021 version2 with parameters to make it more generic 
+
+#> 
+###############################Paramters####################################
+
+  $Smtphost = "relay.guler.com"
+  $from = "ADcheck@guler.com"
+  $EmailReport = "ItManagers@guler.com"
+  $timeout = "60"
+
 ###########################Define Variables##################################
+$EmailReport = $EmailReport -split ','
+$report = ".\ADReport.htm" 
 
-$reportpath = "C:\ADReport.htm" 
-
-if((test-path $reportpath) -like $false)
+if((test-path $report) -like $false)
 {
-new-item $reportpath -type file
+new-item $report -type file
 }
+#####################################Get ALL DC Servers#######################
+$getForest = [system.directoryservices.activedirectory.Forest]::GetCurrentForest()
 
-$timeout = "60"
-
+$DCServers = $getForest.domains | ForEach-Object {$_.DomainControllers} | ForEach-Object {$_.Name}
+ 
 ###############################HTml Report Content############################
-$report = $reportpath
-
 Clear-Content $report 
 Add-Content $report "<html>" 
 Add-Content $report "<head>" 
@@ -50,8 +97,7 @@ Add-Content $report "<body>"
 add-content $report  "<table width='100%'>" 
 add-content $report  "<tr bgcolor='Lavender'>" 
 add-content $report  "<td colspan='7' height='25' align='center'>" 
-add-content $report  "<font face='tahoma' color='#003399' size='4'><strong>Active Directory Health Check</strong></font>"
-add-content $report  "<font face='tahoma' color='#003399' size='2'><strong> By Sukhija Vikas - Microsoft MVP</strong></font>"
+add-content $report  "<font face='tahoma' color='#003399' size='4'><strong>Active Directory Health Check</strong></font>" 
 add-content $report  "</td>" 
 add-content $report  "</tr>" 
 add-content $report  "</table>" 
@@ -71,14 +117,7 @@ Add-Content $report  "<td width='10%' align='center'><B>FSMOCheckTest</B></td>"
  
 Add-Content $report "</tr>" 
 
-#####################################Get ALL DC Servers#################################
-$getForest = [system.directoryservices.activedirectory.Forest]::GetCurrentForest()
-
-$DCServers = $getForest.domains | ForEach-Object {$_.DomainControllers} | ForEach-Object {$_.Name} 
-
-
-################Ping Test######
-
+################Ping Test################################################################
 foreach ($DC in $DCServers){
 $Identity = $DC
                 Add-Content $report "<tr>"
@@ -169,7 +208,6 @@ Write-Host $DC `t $DC `t Ping Success -ForegroundColor Green
                   } 
                 }
                ######################################################
-
                ####################Netlogons status##################
                add-type -AssemblyName microsoft.visualbasic 
                $cmp = "microsoft.visualbasic.strings" -as [type]
@@ -222,7 +260,7 @@ Write-Host $DC `t $DC `t Ping Success -ForegroundColor Green
                   }
                 }
                ########################################################
-	       ####################Services status##################
+	             ####################Services status##################
                add-type -AssemblyName microsoft.visualbasic 
                $cmp = "microsoft.visualbasic.strings" -as [type]
                $sysvol = start-job -scriptblock {dcdiag /test:Services /s:$($args[0])} -ArgumentList $DC
@@ -248,7 +286,7 @@ Write-Host $DC `t $DC `t Ping Success -ForegroundColor Green
                   }
                 }
                ########################################################
-	       ####################Advertising status##################
+	             ####################Advertising status##################
                add-type -AssemblyName microsoft.visualbasic 
                $cmp = "microsoft.visualbasic.strings" -as [type]
                $sysvol = start-job -scriptblock {dcdiag /test:Advertising /s:$($args[0])} -ArgumentList $DC
@@ -274,7 +312,7 @@ Write-Host $DC `t $DC `t Ping Success -ForegroundColor Green
                   }
                 }
                ########################################################
-	       ####################FSMOCheck status##################
+	             ####################FSMOCheck status##################
                add-type -AssemblyName microsoft.visualbasic 
                $cmp = "microsoft.visualbasic.strings" -as [type]
                $sysvol = start-job -scriptblock {dcdiag /test:FSMOCheck /s:$($args[0])} -ArgumentList $DC
@@ -306,7 +344,7 @@ else
               {
 Write-Host $DC `t $DC `t Ping Fail -ForegroundColor Red
 		Add-Content $report "<td bgcolor= 'GainsBoro' align=center>  <B> $Identity</B></td>" 
-                Add-Content $report "<td bgcolor= 'Red' align=center>  <B>Ping Fail</B></td>" 
+    Add-Content $report "<td bgcolor= 'Red' align=center>  <B>Ping Fail</B></td>" 
 		Add-Content $report "<td bgcolor= 'Red' align=center>  <B>Ping Fail</B></td>" 
 		Add-Content $report "<td bgcolor= 'Red' align=center>  <B>Ping Fail</B></td>" 
 		Add-Content $report "<td bgcolor= 'Red' align=center>  <B>Ping Fail</B></td>" 
@@ -321,17 +359,16 @@ Write-Host $DC `t $DC `t Ping Fail -ForegroundColor Red
 
 Add-Content $report "</tr>"
 ############################################Close HTMl Tables###########################
-
-
 Add-content $report  "</table>" 
 Add-Content $report "</body>" 
 Add-Content $report "</html>" 
 
-
 ########################################################################################
-#######################################DC-general-testing#######################################
+#############################################Send Email#################################
 
-$services='DNS','DFS Replication','Intersite Messaging','Kerberos Key Distribution Center','NETLogon','Active Directory Domain Services'
-foreach ($service in $services){Get-Service $service | select-object name,status}
-
-##############################################################################
+if(($Smtphost) -and ($EmailReport) -and ($from)){
+[string]$body = Get-Content $report
+Send-MailMessage -SmtpServer $Smtphost -From $from -To $EmailReport -Subject "Active Directory Health Monitor" -Body $body -BodyAsHtml
+}
+####################################EnD#################################################
+########################################################################################
