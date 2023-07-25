@@ -3,5 +3,5 @@
 
 - DC-Healty-Check.ps1 istenilen herhangi bir zamanda istenilen mail adreslerine raporu mail atacaktır.
 - ADExplorer.exe ADSIedit detaylı inceleem sunar.
-- 
+- My_AD_OID.rar Active Directory atributleri içindir.
 -
