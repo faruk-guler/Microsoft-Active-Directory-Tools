@@ -18,6 +18,10 @@ $htmlReportContent += "<h2># | TheGuler0x | 🐝</h2>"
 # Ana domain ACL bilgilerini al
 $domainACL = dsacls $domainController
 
+$reportDateTime = Get-Date
+$computerName = $env:COMPUTERNAME  # Bu, bilgisayar adınızı alır
+$domainName = ([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).Name
+
 # Generated tarihi
 $htmlReportContent += "<p>Generated: $reportDateTime</p>"
 $htmlReportContent += "<p>Bilgisayar Adı: $computerName</p>"
