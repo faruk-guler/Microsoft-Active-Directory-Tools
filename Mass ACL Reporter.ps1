@@ -15,14 +15,14 @@ $htmlReportContent += "<h2># All Domain OU Mass ACL-ACE Reporter:📜</h2>"
 # Ana domain ACL bilgilerini rapora ekleyin
 $htmlReportContent += "<h2># | TheGuler0x | 🐝</h2>"
 
-# Ana domain ACL bilgilerini al
+# Ana domain ACL al
 $domainACL = dsacls $domainController
 
 $reportDateTime = Get-Date
-$computerName = $env:COMPUTERNAME  # Bu, bilgisayar adınızı alır
+$computerName = $env:COMPUTERNAME
 $domainName = ([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).Name
 
-# Generated tarihi
+# Generated:
 $htmlReportContent += "<p>Generated: $reportDateTime</p>"
 $htmlReportContent += "<p>Bilgisayar Adı: $computerName</p>"
 $htmlReportContent += "<p>Etki Alanı Adı: $domainName</p>"
