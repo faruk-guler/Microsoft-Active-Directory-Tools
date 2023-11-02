@@ -22,10 +22,9 @@ $reportDateTime = Get-Date
 $computerName = $env:COMPUTERNAME
 $domainName = ([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).Name
 
-# Generated:
-$htmlReportContent += "<p>Generated: $reportDateTime</p>"
-$htmlReportContent += "<p>Bilgisayar Adı: $computerName</p>"
-$htmlReportContent += "<p>Etki Alanı Adı: $domainName</p>"
+$htmlReportContent += "<p style='color: blue '>Generated: $reportDateTime</p>"
+$htmlReportContent += "<p style='color: blue '>Host: $computerName</p>"
+$htmlReportContent += "<p style='color: red '>Etki Alanı: $domainName</p>"
 
 
 # Ana domain name
