@@ -11,6 +11,7 @@ $htmlReportContent = "<html><head><title>Active Directory ACL-ACE Report</title>
 
 
 # Başlık
+$htmlReportContent += "<h2>________________________________________</h2>"
 $htmlReportContent += "<h2># All Domain OU Mass ACL-ACE Reporter:📜</h2>"
 # Ana domain ACL bilgilerini rapora ekleyin
 $htmlReportContent += "<h2># | TheGuler0x | 🐝</h2>"
