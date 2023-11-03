@@ -7,8 +7,7 @@ $rootOU = Get-ADOrganizationalUnit -Filter * -SearchBase $domainController
 
 # HTML rapor dosyası oluştur
 $htmlReportPath = "C:\AD_ACL_Rapor.html"
-$htmlReportContent = "<html><head><title>Active Directory ACL-ACE Report</title></head><body>"
-
+$htmlReportContent = "<html><head><title>Active Directory ACL-ACE Report</title></head><body style='background-color: #C6E2FF;'>"
 
 # Başlık
 $htmlReportContent += "<h2>________________________________________</h2>"
