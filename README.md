@@ -1,4 +1,4 @@
-# Microsoft-Active-Directory için gerekli tool ve dosyaları içeririr. zamanla güncellenir..
+# Microsoft-Active-Directory için gerekli tool ve dosyaları içerir. zamanla güncellenir..
 # Saygılarımla.
 
 - ADExplorer.exe ADSIedit detaylı inceleme imkanı sunar.
