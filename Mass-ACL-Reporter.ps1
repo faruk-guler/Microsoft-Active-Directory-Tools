@@ -1,54 +1,81 @@
-# Active Directory module import
+# Import Active Directory module
 Import-Module ActiveDirectory
 
-# root and Spesific [OU]
+# Define variables and Spesific OU
 $domainController = "DC=guler,DC=com"
 $rootOU = Get-ADOrganizationalUnit -Filter * -SearchBase $domainController
-
-# HTML rapor creation
 $htmlReportPath = "C:\AD_ACL_Rapor.html"
-$htmlReportContent = "<html><head><title>Active Directory ACL-ACE Report</title></head><body style='background-color: #C6E2FF;'>"
-
-# Title
-$htmlReportContent += "<h2>________________________________________</h2>"
-$htmlReportContent += "<h2># All Domain OU Mass ACL-ACE Reporter:📜</h2>"
-# Ana domain ACL bilgilerini rapora ekleyin
-$htmlReportContent += "<h2># | TheGuler0x | 🐝</h2>"
-
 $reportDateTime = Get-Date
 $computerName = $env:COMPUTERNAME
 $domainName = ([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).Name
 
-$htmlReportContent += "<p style='color: blue '>Generated: $reportDateTime</p>"
-$htmlReportContent += "<p style='color: blue '>Host: $computerName</p>"
-$htmlReportContent += "<p style='color: red '>Etki Alanı: $domainName</p>"
+# Initialize HTML report content
+$htmlReportContent = @"
+<html>
+<head>
+    <title>Active Directory ACL-ACE Reporter TheGuler0x | 🐝</title>
+    <style>
+        body {
+            background-color: #F0F8FF;
+            font-family: Arial, sans-serif;
+        }
+        h2 {
+            color: #333333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h2>AD Mass ACL-ACE Reporter by TheGuler0x 🐝📜 https://www.farukguler.com</h2>
+<p>Report generated on: $($reportDateTime.ToString('yyyy-MM-dd HH:mm:ss'))</p>
+<p>Computer Name: $computerName</p>
+<p>Domain Name: $domainName</p>
 
+<h3>Organizational Units (OU) and their ACL-ACE Details</h3>
+"@
 
-# Ana domain name
-$htmlReportContent += "<h2><font color='green'>#Main Domain: $domainController</font></h2>"
-
-$domainACL -split "`r`n" | ForEach-Object {
-    $htmlReportContent += "<pre>$_</pre>"
-}
-
-# Tüm OU'ları isle
+# Retrieve ACL-ACE details for each OU
 foreach ($ou in $rootOU) {
-    $ouDN = $ou.DistinguishedName
-    $ouName = $ou.Name
-    $ouACL = dsacls "$ouDN"
+    $htmlReportContent += @"
+    <h4>OU: $($ou.Name)</h4>
+    <table>
+        <tr>
+            <th>Identity Reference</th>
+            <th>Access Control Type</th>
+            <th>Active Directory Right</th>
+        </tr>
+"@
 
-    # OU başlığı (sarı renkle vurgula)
-    $htmlReportContent += "<h2><font color='green'>#OU: $ouName</font></h2>"
-
-    # dsacls çıktısını satır satır ekle
-    $ouACL -split "`r`n" | ForEach-Object {
-        $htmlReportContent += "<pre>$_</pre>"
+    $acl = Get-ACL "AD:\$($ou.DistinguishedName)" | Select-Object -ExpandProperty Access
+    foreach ($ace in $acl) {
+        $htmlReportContent += @"
+        <tr>
+            <td>$($ace.IdentityReference)</td>
+            <td>$($ace.AccessControlType)</td>
+            <td>$($ace.ActiveDirectoryRights)</td>
+        </tr>
+"@
     }
 
-    # Özel karakterler ekleyin.
-    $htmlReportContent += "<p style='color: red; font-weight: bold;'>📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃</p>"
+    $htmlReportContent += "</table>"
 }
 
-# HTML raporunu kapat
+# Complete HTML content
 $htmlReportContent += "</body></html>"
-$htmlReportContent | Out-File -FilePath $htmlReportPath
+
+# Save HTML report to file
+$htmlReportContent | Out-File -FilePath $htmlReportPath -Encoding UTF8
+
+Write-Host "ACL-ACE report generated successfully: $htmlReportPath"
