@@ -13,7 +13,7 @@ $domainName = ([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDoma
 $htmlReportContent = @"
 <html>
 <head>
-    <title>Report by TheGuler0x | 🐝</title>
+    <title>Report by TheGuler0x |</title>
     <style>
         body {
             background-color: #F0F8FF;
@@ -38,7 +38,7 @@ $htmlReportContent = @"
     </style>
 </head>
 <body>
-<h2>AD Mass ACL-ACE Reporter by TheGuler0x 🐝📜 https://www.farukguler.com</h2>
+<h2>AD Mass ACL-ACE Reporter by TheGuler0x 📜🐝 https://www.farukguler.com</h2>
 <p>Report generated on: $($reportDateTime.ToString('yyyy-MM-dd HH:mm:ss'))</p>
 <p>Computer Name: $computerName</p>
 <p>Domain Name: $domainName</p>
