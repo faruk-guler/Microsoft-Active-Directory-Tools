@@ -1,22 +1,19 @@
 # Active Directory module import
 Import-Module ActiveDirectory
 
-# DC name and root OU
+# root and Spesific [OU]
 $domainController = "DC=guler,DC=com"
 $rootOU = Get-ADOrganizationalUnit -Filter * -SearchBase $domainController
 
-# HTML rapor dosyası oluştur
+# HTML rapor creation
 $htmlReportPath = "C:\AD_ACL_Rapor.html"
 $htmlReportContent = "<html><head><title>Active Directory ACL-ACE Report</title></head><body style='background-color: #C6E2FF;'>"
 
-# Başlık
+# Title
 $htmlReportContent += "<h2>________________________________________</h2>"
 $htmlReportContent += "<h2># All Domain OU Mass ACL-ACE Reporter:📜</h2>"
 # Ana domain ACL bilgilerini rapora ekleyin
 $htmlReportContent += "<h2># | TheGuler0x | 🐝</h2>"
-
-# Ana domain ACL al
-$domainACL = dsacls $domainController
 
 $reportDateTime = Get-Date
 $computerName = $env:COMPUTERNAME
@@ -34,21 +31,21 @@ $domainACL -split "`r`n" | ForEach-Object {
     $htmlReportContent += "<pre>$_</pre>"
 }
 
-# Tüm OU'ları işleyin
+# Tüm OU'ları isle
 foreach ($ou in $rootOU) {
     $ouDN = $ou.DistinguishedName
     $ouName = $ou.Name
     $ouACL = dsacls "$ouDN"
 
-    # OU başlığı (sarı renkle vurgulandı)
+    # OU başlığı (sarı renkle vurgula)
     $htmlReportContent += "<h2><font color='green'>#OU: $ouName</font></h2>"
 
-    # dsacls çıktısını satır satır ekleyin
+    # dsacls çıktısını satır satır ekle
     $ouACL -split "`r`n" | ForEach-Object {
         $htmlReportContent += "<pre>$_</pre>"
     }
 
-    # Özel işaretleme ekleyin
+    # Özel karakterler ekleyin.
     $htmlReportContent += "<p style='color: red; font-weight: bold;'>📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃📃</p>"
 }
 
