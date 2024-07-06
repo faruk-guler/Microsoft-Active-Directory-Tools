@@ -13,7 +13,7 @@ $domainName = ([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDoma
 $htmlReportContent = @"
 <html>
 <head>
-    <title>Active Directory ACL-ACE Reporter TheGuler0x | 🐝</title>
+    <title>Active Directory ACL-ACE Report TheGuler0x | 🐝</title>
     <style>
         body {
             background-color: #F0F8FF;
